@@ -28,6 +28,26 @@ export default function Home() {
 
     const [user, setUser] = useState<User | null>(null)
 
+
+    useEffect(() => {
+        if (localStorage.token) {
+            fetch('http://localhost:4000/validate', {
+                headers: {
+                    Authorization: localStorage.token
+                }
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data.error) {
+                        console.log('Invalid token!')
+                    } else {
+                        setUser(data)
+                    }
+                })
+        }
+    }, [])
+
+
     function signUp(e: any) {
         e.preventDefault()
         const email = e.target.email.value
@@ -69,51 +89,25 @@ export default function Home() {
                 if (data.error) {
                     alert(data.error)
                 } else {
-                    // we managed to sign in!
-
-                    // store the token for later
                     localStorage.setItem('token', data.token)
-
-                    // put the user in state
                     setUser(data.user)
                 }
             })
     }
 
     function signOut() {
-        // remove the token from localStorage to "forget" the user
         localStorage.removeItem('token')
-
-        // unset the user in state
         setUser(null)
     }
 
-    useEffect(() => {
-        if (localStorage.token) {
-            fetch('http://localhost:4000/validate', {
-                headers: {
-                    Authorization: localStorage.token
-                }
-            })
-                .then(resp => resp.json())
-                .then(data => {
-                    if (data.error) {
-                        // token was not good, we got an error back
-                        console.log('Invalid token!')
-                    } else {
-                        // token is good, we get the user back
-                        setUser(data)
-                    }
-                })
-        }
-    }, [])
+
 
     if (user === null)
         return (
             <div className='App'>
                 <div>
                     <form onSubmit={signUp}>
-                        <h2>Don't have an account? Sign up!</h2>
+                        <h2> Sign up!</h2>
                         <input type='email' required placeholder='email' name='email' />
                         <input
                             type='password'
@@ -141,14 +135,17 @@ export default function Home() {
 
     return (
         <div className='App'>
-            <h1>Hello there, {user.name}!</h1>
+            <h1>Hello  {user.name}!</h1>
             <button onClick={signOut}>SIGN OUT</button>
 
-            <ul>
-                <li>
-                    <h2></h2>
-                    <img src='' alt='' />
-                </li>
+            <ul className='product_list'>
+                {user.orders.map(order =>
+                    <li>
+                        <h2>{order.item.title}</h2>
+                        <img src={order.item.image} alt={order.item.title} />
+                    </li>
+                )
+                }
             </ul>
         </div>
     )

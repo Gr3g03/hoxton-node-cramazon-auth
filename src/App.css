@@ -2,9 +2,41 @@
   text-align: center;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 .img{
   width: 100%;
 }
+
+li {
+  list-style: none;
+}
+
+
+.header {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  height: 100px;
+}
+
+
+.header__nav {
+  margin-left: 3rem;
+}
+
+.header__nav li {
+  display: inline-block;
+  margin-left: 1rem;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+}
+
 
 .order-list {
   display: grid;
